@@ -41,11 +41,9 @@ and dermatology images. You provide expert-level answers to medical questions.
 MEDGEMMA_OPERATIONS = {
     "vqa": {
         "system_prompt": DEFAULT_VQA_SYSTEM_PROMPT,
-        "params": {},
     },
     "classify": {
         "system_prompt": DEFAULT_CLASSIFICATION_SYSTEM_PROMPT,
-        "params": {},
     }
 }
 
@@ -226,11 +224,16 @@ class medgemma(SamplesMixin, Model):
                 self.prompt = str(field_value)
 
         messages = [
-            {"role": "system", "content": self.system_prompt},
+            {
+                "role": "system",
+                "content": [
+                            {"type": "text", "text": self.system_prompt}
+                            ]
+            },
             {
                 "role": "user",
                 "content": [
-                    {"type": "text", "text": self.prompt},               
+                    {"type": "text", "text": self.prompt},
                     {"type": "image", "image": image}  # Pass the PIL Image directly
                 ]
             }
@@ -261,8 +264,11 @@ class medgemma(SamplesMixin, Model):
             return output_text.strip()
 
         # For other operations, parse JSON and convert to appropriate format
+        parsed_output = self._parse_json(output_text)
+        if not parsed_output:
+            return None
+        
         if self.operation == "classify":
-            parsed_output = self._parse_json(output_text)
             return self._to_classifications(parsed_output)
 
 
