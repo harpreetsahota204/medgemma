@@ -30,7 +30,7 @@ Unless specifically requested for single-class output, you may report multiple r
 ```
 Always return your response as valid JSON wrapped in ```json blocks. 
 
-You may report multiple lables if they are relevant. Do not report confidence.
+You may report multiple lables if they are relevant. Do not report your confidence.
 """
 
 DEFAULT_VQA_SYSTEM_PROMPT = """You are an expert across medical domains including radiology images, histopathology patches, ophthalmology images,

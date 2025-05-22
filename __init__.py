@@ -13,7 +13,6 @@ MEDGEMMA_MODES = {
     "classify": "Image classification",
 }
 
-
 logger = logging.getLogger(__name__)
 
 def download_model(model_name, model_path, **kwargs):
@@ -89,7 +88,7 @@ def resolve_input(self, ctx):
                 description="What's your query?",
                 required=True,
             )
-            
+
         inputs.str(
             "system_prompt",
             default=None,
