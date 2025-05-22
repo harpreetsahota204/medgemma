@@ -1,0 +1,27 @@
+{
+    "name": "medgemma",
+    "url": "https://github.com/harpreetsahota204/medgemma",
+    "models": [
+        {
+            "base_name": "google/medgemma-4b-it",
+            "base_filename":"medgemma-4b-it",
+            "author": "Google DeepMind",
+            "license": "health-ai-developer-foundations (https://developers.google.com/health-ai-developer-foundations/terms)",
+            "source": "https://huggingface.co/google/medgemma-4b-it",
+            "description": "MedGemma is a collection of Gemma 3 variants that are trained for performance on medical text and image comprehension",
+            "tags": [
+                "VLM",
+                "zero-shot"
+            ],
+            "date_added": "2025-05-22",
+            "requirements": {
+                "packages": ["huggingface-hub", "transformers", "torch", "torchvision", "accelerate", "bitsandbytes"],
+                "cpu": {
+                    "support": true
+                },
+                "gpu": {
+                    "support": true
+                }
+            }
+        }]
+}
