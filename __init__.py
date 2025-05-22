@@ -66,7 +66,7 @@ def resolve_input(self, ctx):
         """
         inputs = types.Object()
 
-        mode_dropdown = types.Dropdown(label="What would you like to use Gemma3 for?")
+        mode_dropdown = types.Dropdown(label="What would you like to use MedGemma for?")
         
         for k, v in MEDGEMMA_MODES.items():
             mode_dropdown.add_choice(k, label=v)
@@ -82,7 +82,6 @@ def resolve_input(self, ctx):
 
         chosen_task = ctx.params.get("operation")
 
-
         if chosen_task == "query":
             inputs.str(
                 "query_text",
@@ -90,23 +89,26 @@ def resolve_input(self, ctx):
                 description="What's your query?",
                 required=True,
             )
+            
+        inputs.str(
+            "system_prompt",
+            default=None,
+            required=False,
+            label="System Prompt",
+            description="Optional custom system prompt",
+            view=types.AutocompleteView()
+        )
+        
+        inputs.str(
+            "prompt",
+            default=None,
+            required=False,
+            label="Prompt",
+            description="Prompt for guiding operation",
+            view=types.AutocompleteView()
+        )
 
-        if chosen_task == "detect":
-            inputs.str(
-                "object_type",
-                label="Detect",
-                description="What do you want to detect?",
-                required=True,
-            )
 
-        if chosen_task == "point":
-            inputs.str(
-                "object_type",
-                label="Point",
-                description="What do you want to place a point on?",
-                required=True,
-            )
-       
         inputs.str(
             "output_field",            
             required=True,
