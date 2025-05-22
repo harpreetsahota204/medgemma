@@ -85,7 +85,7 @@ class medgemma(SamplesMixin, Model):
         logger.info(f"Using device: {self.device}")
 
         # Set dtype for CUDA devices
-        self.torch_dtype = torch.bfloat16 if self.device == "cuda" else None
+        self.torch_dtype = torch.bfloat16 if self.device == "cuda" else "auto"
         
         # Load model and processor
         logger.info(f"Loading model from {model_path}")
@@ -93,10 +93,8 @@ class medgemma(SamplesMixin, Model):
         model_kwargs = {
             "trust_remote_code": True,
             "device_map": self.device,
+            "torch_dtype":self.torch_dtype 
         }
-
-        if self.torch_dtype:
-            model_kwargs["torch_dtype"] = self.torch_dtype
 
         if self.quantized:
             model_kwargs["quantization_config"] = BitsAndBytesConfig(load_in_4bit=True)
