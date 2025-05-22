@@ -18,15 +18,15 @@ DEFAULT_CLASSIFICATION_SYSTEM_PROMPT = """You specialize in comprehensive classi
 Unless specifically requested for single-class output, you may report multiple relevant classifications. Report all classifications as JSON array of predictions in the format: 
 
 ```json
-{
-    "classifications": [
-        {
-            "label": "descriptive medical condition or relevant label",
-            "label": "descriptive medical condition or relevant label",
-            ...,
-        }
-    ]
-}
+[
+    {
+        "label": "first descriptive medical condition or relevant label"
+    },
+    {
+        "label": "second descriptive medical condition or relevant label"
+    },
+    ...
+]
 ```
 Always return your response as valid JSON wrapped in ```json blocks. 
 
@@ -36,8 +36,6 @@ You may report multiple lables if they are relevant. Do not report your confiden
 DEFAULT_VQA_SYSTEM_PROMPT = """You are an expert across medical domains including radiology images, histopathology patches, ophthalmology images,
 and dermatology images. You provide expert-level answers to medical questions.
 """
-
-
 
 MEDGEMMA_OPERATIONS = {
     "vqa": {
