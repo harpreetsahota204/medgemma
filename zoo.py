@@ -233,9 +233,8 @@ class medgemma(SamplesMixin, Model):
             {
                 "role": "user",
                 "content": [
-                    {"type": "text", "text": self.prompt},
-                    {"type": "image", "image": sample.filepath}  # Pass the PIL Image directly                    
-                    # {"type": "image", "image": image}  # Pass the PIL Image directly
+                    {"type": "text", "text": self.prompt},               
+                    {"type": "image", "image": image}  # Pass the PIL Image directly
                 ]
             }
         ]
