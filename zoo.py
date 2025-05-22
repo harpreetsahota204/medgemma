@@ -18,15 +18,15 @@ DEFAULT_CLASSIFICATION_SYSTEM_PROMPT = """You specialize in comprehensive classi
 Unless specifically requested for single-class output, you may report multiple relevant classifications. Report all classifications as JSON array of predictions in the format: 
 
 ```json
-[
-    {
-        "label": "first descriptive medical condition or relevant label"
-    },
-    {
-        "label": "second descriptive medical condition or relevant label"
-    },
-    ...
-]
+{
+    "classifications": [
+        {
+            "label": "descriptive medical condition or relevant label",
+            "label": "descriptive medical condition or relevant label",
+            ...,
+        }
+    ]
+}
 ```
 Always return your response as valid JSON wrapped in ```json blocks. 
 
@@ -36,6 +36,7 @@ You may report multiple lables if they are relevant. Do not report your confiden
 DEFAULT_VQA_SYSTEM_PROMPT = """You are an expert across medical domains including radiology images, histopathology patches, ophthalmology images,
 and dermatology images. You provide expert-level answers to medical questions.
 """
+
 
 MEDGEMMA_OPERATIONS = {
     "vqa": {
@@ -149,11 +150,6 @@ class medgemma(SamplesMixin, Model):
     def _parse_json(self, s: str) -> Optional[Dict]:
         """Parse JSON from model output.
         
-        The model may return JSON in different formats:
-        1. Raw JSON string
-        2. JSON wrapped in markdown code blocks (```json ... ```)
-        3. Non-JSON string (returns None)
-        
         Args:
             s: String output from the model to parse
             
@@ -162,61 +158,66 @@ class medgemma(SamplesMixin, Model):
             None: If parsing fails or input is invalid
             Original input: If input is not a string
         """
-        # Return input directly if not a string
         if not isinstance(s, str):
             return s
             
         # Handle JSON wrapped in markdown code blocks
         if "```json" in s:
             try:
-                # Extract JSON between ```json and ``` markers
                 s = s.split("```json")[1].split("```")[0].strip()
-            except:
-                pass
+            except IndexError:
+                logger.debug("Failed to extract JSON from markdown blocks")
+                return None
         
-        # Attempt to parse the JSON string
         try:
             return json.loads(s)
-        except:
-            # Log first 200 chars of failed parse for debugging
-            logger.debug(f"Failed to parse JSON: {s[:200]}")
+        except json.JSONDecodeError as e:
+            logger.debug(f"JSON parse error: {e}. First 200 chars: {s[:200]}")
             return None
 
-    def _to_classifications(self, classes: List[Dict]) -> fo.Classifications:
-        """Convert a list of classification dictionaries to FiftyOne Classifications.
+    def _to_classifications(self, data: Dict) -> fo.Classifications:
+        """Convert JSON classification data to FiftyOne Classifications.
         
         Args:
-            classes: List of dictionaries containing classification information.
-                Each dictionary should have:
+            data: Dictionary containing a 'classifications' list where each item has:
                 - 'label': String class label
-                
+            
         Returns:
-            fo.Classifications object containing the converted classification 
-            annotations with labels and optional confidence scores
+            fo.Classifications object containing the converted classification annotations
             
         Example input:
-            [
-                {"label": "cat",},
-                {"label": "dog"}
-            ]
+            {
+                "classifications": [
+                    {"label": "condition_1"},
+                    {"label": "condition_2"}
+                ]
+            }
         """
         classifications = []
+        
+        try:
+            # Extract the classifications list from the input dictionary
+            classes = data.get("classifications", [])
+            
+            # Process each classification dictionary
+            for cls in classes:
+                try:
+                    if not isinstance(cls, dict) or "label" not in cls:
+                        logger.debug(f"Invalid classification format: {cls}")
+                        continue
+                        
+                    classification = fo.Classification(
+                        label=str(cls["label"]),
+                    )
+                    classifications.append(classification)
 
-        # Process each classification dictionary
-        for cls in classes:
-            try:
-                # Create Classification object with required label and optional confidence
-                classification = fo.Classification(
-                    label=str(cls["label"]),  # Convert label to string for consistency
-                )
-                classifications.append(classification)
+                except Exception as e:
+                    logger.debug(f"Error processing classification {cls}: {e}")
+                    continue
 
-            except Exception as e:
-                # Log any errors but continue processing remaining classifications
-                logger.debug(f"Error processing classification {cls}: {e}")
-                continue
-
-        # Return Classifications container with all processed results
+        except Exception as e:
+            logger.debug(f"Error processing classifications data: {e}")
+            
         return fo.Classifications(classifications=classifications)
 
     def _predict(self, image: Image.Image, sample=None) -> Union[fo.Classifications, str]:
