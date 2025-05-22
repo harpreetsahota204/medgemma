@@ -73,9 +73,7 @@ class medgemma(SamplesMixin, Model):
         quantized: bool = None,
         **kwargs
     ):
-        if operation not in MEDGEMMA_OPERATIONS:
-            raise ValueError(f"Invalid operation: {operation}. Must be one of {list(MEDGEMMA_OPERATIONS.keys())}")
-        
+
         self._fields = {}
         
         self.model_path = model_path
