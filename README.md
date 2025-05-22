@@ -117,6 +117,11 @@ Provide your assessment in JSON format with detailed observations."""
   )
   ```
 
+# 👩🏽‍💻 Example notebook
+
+You can refer to the [example notebook](using_medgemma_zoo_model.ipynb) to get hands on.
+
+
 ## License
 
 MedGemma is governed by the [Health AI Developer Foundations terms of use](https://developers.google.com/health-ai-developer-foundations/terms).
