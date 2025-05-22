@@ -2,6 +2,25 @@
 
 This repository integrates Google's MedGemma models with FiftyOne, allowing you to easily use these powerful medical AI models for analyzing and classifying medical images in your FiftyOne datasets.
 
+# ℹ️  Important! Be sure to request access to the model!
+
+This is a gated model, so you will need to fill out the form on the model card: https://huggingface.co/google/medgemma-4b-it
+
+Approval should be instantaneous.
+
+You'll also have to set your Hugging Face in your enviornment:
+
+```bash
+export HF_TOKEN="your_token"
+```
+
+Or sign-in to Hugging Face via the CLI:
+
+```bash
+huggingface-cli login
+```
+
+
 ## What is MedGemma?
 
 MedGemma is a collection of [Gemma 3](hhttps://huggingface.co/collections/google/medgemma-release-680aade845f90bec6a3f60c4) variants that are trained specifically for medical text and image comprehension. These models excel at understanding various medical imaging modalities including:
