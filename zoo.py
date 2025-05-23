@@ -141,7 +141,7 @@ class medgemma(SamplesMixin, Model):
     @property
     def system_prompt(self):
         # Return custom system prompt if set, otherwise return default for current operation
-        return self._custom_system_prompt if self._custom_system_prompt is not None else MEDGEMMA_OPERATIONS[self.operation]["system_prompt"]
+        return self._custom_system_prompt if self._custom_system_prompt is not None else MEDGEMMA_OPERATIONS[self.operation]
 
     @system_prompt.setter
     def system_prompt(self, value):
