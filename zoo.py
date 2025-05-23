@@ -43,12 +43,8 @@ You may be provided with a simple query, patient history with a complex query, a
 
 
 MEDGEMMA_OPERATIONS = {
-    "vqa": {
-        "system_prompt": DEFAULT_VQA_SYSTEM_PROMPT,
-    },
-    "classify": {
-        "system_prompt": DEFAULT_CLASSIFICATION_SYSTEM_PROMPT,
-    }
+    "vqa": DEFAULT_VQA_SYSTEM_PROMPT,
+    "classify": DEFAULT_CLASSIFICATION_SYSTEM_PROMPT
 }
 
 logger = logging.getLogger(__name__)
