@@ -262,13 +262,8 @@ class medgemma(SamplesMixin, Model):
         # For VQA, return the raw text output
         if self.operation == "vqa":
             return output_text.strip()
-
-        # For other operations, parse JSON and convert to appropriate format
-        parsed_output = self._parse_json(output_text)
-        if not parsed_output:
-            return None
-        
-        if self.operation == "classify":
+        elif self.operation == "classify":
+            parsed_output = self._parse_json(output_text)
             return self._to_classifications(parsed_output)
 
 
