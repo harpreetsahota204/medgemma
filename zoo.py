@@ -112,6 +112,15 @@ class medgemma(SamplesMixin, Model):
 
         self.model.eval()
 
+    @property
+    def needs_fields(self):
+        """A dict mapping model-specific keys to sample field names."""
+        return self._fields
+
+    @needs_fields.setter
+    def needs_fields(self, fields):
+        self._fields = fields
+
     def _get_field(self):
         if "prompt_field" in self.needs_fields:
             prompt_field = self.needs_fields["prompt_field"]
