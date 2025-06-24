@@ -15,7 +15,7 @@
             ],
             "date_added": "2025-05-22",
             "requirements": {
-                "packages": ["huggingface-hub", "transformers<=4.51.3", "torch", "torchvision", "accelerate", "bitsandbytes"],
+                "packages": ["huggingface-hub", "transformers", "torch", "torchvision", "accelerate", "bitsandbytes"],
                 "cpu": {
                     "support": true
                 },
