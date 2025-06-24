@@ -82,22 +82,20 @@ class medgemma(SamplesMixin, Model):
         self.device = get_device()
         logger.info(f"Using device: {self.device}")
 
-        # Set dtype for CUDA devices
-        self.torch_dtype = torch.bfloat16 if self.device == "cuda" else "auto"
-        
-        # Load model and processor
-        logger.info(f"Loading model from {model_path}")
-
+        # Base model kwargs that are always needed
         model_kwargs = {
             "trust_remote_code": True,
             "device_map": self.device,
-            "torch_dtype":self.torch_dtype 
         }
-
-        # Only apply quantization if device is CUDA
-        if self.quantized and self.device == "cuda":
-            model_kwargs["quantization_config"] = BitsAndBytesConfig(load_in_4bit=True)
-        elif self.quantized and self.device != "cuda":
+        
+        # Only set specific torch_dtype for CUDA devices
+        if self.device == "cuda":
+            model_kwargs["torch_dtype"] = torch.bfloat16
+            
+            # Only apply quantization if device is CUDA
+            if self.quantized:
+                model_kwargs["quantization_config"] = BitsAndBytesConfig(load_in_4bit=True)
+        elif self.quantized:
             logger.warning("Quantization is only supported on CUDA devices. Ignoring quantization request.")
             
         self.model = AutoModelForImageTextToText.from_pretrained(
@@ -257,7 +255,13 @@ class medgemma(SamplesMixin, Model):
             add_generation_prompt=True,
             return_tensors="pt",
             return_dict=True,
-            ).to(self.device, dtype=self.torch_dtype)
+        )
+        
+        # Move tensors to the device
+        if self.device == "cuda":
+            text = {k: v.to(self.device, dtype=torch.bfloat16) for k, v in text.items()}
+        else:
+            text = {k: v.to(self.device) for k, v in text.items()}
 
         input_len = text["input_ids"].shape[-1]
 
