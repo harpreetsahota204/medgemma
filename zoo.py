@@ -94,9 +94,12 @@ class medgemma(SamplesMixin, Model):
             "torch_dtype":self.torch_dtype 
         }
 
-        if self.quantized:
+        # Only apply quantization if device is CUDA
+        if self.quantized and self.device == "cuda":
             model_kwargs["quantization_config"] = BitsAndBytesConfig(load_in_4bit=True)
-
+        elif self.quantized and self.device != "cuda":
+            logger.warning("Quantization is only supported on CUDA devices. Ignoring quantization request.")
+            
         self.model = AutoModelForImageTextToText.from_pretrained(
             model_path,
             **model_kwargs
