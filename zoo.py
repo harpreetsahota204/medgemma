@@ -88,9 +88,12 @@ class medgemma(SamplesMixin, Model):
             "device_map": self.device,
         }
         
-        # Only set specific torch_dtype for CUDA devices
-        if self.device == "cuda":
-            model_kwargs["torch_dtype"] = torch.bfloat16
+        # Set optimizations based on CUDA device capabilities
+        if self.device == "cuda" and torch.cuda.is_available():
+            capability = torch.cuda.get_device_capability(self.device)
+            # Enable bfloat16 on Ampere+ GPUs (compute capability 8.0+)
+            if capability[0] >= 8:
+                model_kwargs["torch_dtype"] = torch.bfloat16
             
             # Only apply quantization if device is CUDA
             if self.quantized:
